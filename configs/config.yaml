@@ -1,0 +1,23 @@
+random_seed: 42
+paths:
+  raw_data: data/raw
+  models: models
+  reports: reports
+data:
+  chunksize: 100000
+  label_column: Label
+split:
+  train_days: [Monday]
+  validation_days: [Tuesday]
+  test_days: [Wednesday, Thursday, Friday]
+models:
+  isolation_forest:
+    n_estimators: 200
+  pca:
+    variance_retained: 0.95
+threshold:
+  target_fpr: [0.01, 0.05]
+risk:
+  medium_quantile: 0.90
+  high_quantile: 0.95
+  critical_quantile: 0.99

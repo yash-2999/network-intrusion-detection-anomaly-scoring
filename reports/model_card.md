@@ -1,0 +1,2 @@
+# Model Card
+Intended use: educational batch analysis of network flow features. Data: CIC-IDS2017, supplied separately by user. Isolation Forest and PCA fit on Monday BENIGN; preprocessing fit on same subset; threshold chosen from Tuesday BENIGN; test held out Wednesday-Friday. Random Forest is a supervised reference trained on labeled Monday rows. Scores are not calibrated probabilities. Risks include false alerts, missed attacks, dataset shift and capture artifacts. Not production-ready; no live packet capture, streaming, SIEM integration or operational controls.
