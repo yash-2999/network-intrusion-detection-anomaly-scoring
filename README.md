@@ -122,8 +122,54 @@ A chronological, day-based split is used instead of shuffling flows.
 - Wednesday–Friday data is never used to fit preprocessing or choose thresholds
 - Identifiers, timestamps, destination port and labels are excluded from model inputs
 
-<!-- TODO: add one line stating the exact threshold rule from src/nids/threshold.py,
-e.g. "Threshold = 99th percentile of Tuesday BENIGN scores." -->
+### Threshold Selection and False Positive Rate Control
+
+The project uses validation-based percentile thresholding to control the False Positive Rate (FPR).
+
+Anomaly thresholds are calculated using BENIGN validation scores only.
+
+\[
+T = Q(1-\text{target\_FPR}, S_{\text{benign}})
+\]
+
+Where:
+- \(T\) = Selected anomaly threshold.
+- \(Q\) = Empirical quantile function.
+- \(S_{\text{benign}}\) = BENIGN validation anomaly scores.
+
+Implementation:
+
+```python
+threshold = np.quantile(
+    benign_validation_scores,
+    1 - target_fpr,
+    method="higher"
+)
+```
+
+Two operating points are evaluated:
+
+| Target FPR | Percentile |
+|---|---:|
+| 1% | 99th percentile |
+| 5% | 95th percentile |
+
+**Threshold selection workflow:**
+
+1. Train Isolation Forest on Monday BENIGN traffic.
+2. Generate anomaly scores on Tuesday validation traffic.
+3. Extract BENIGN validation scores only.
+4. Calculate the 95th and 99th percentile thresholds.
+5. Save the selected threshold in `models/metadata.joblib`.
+6. Freeze the threshold before final evaluation.
+
+The `higher` quantile method selects an observed score greater than or equal to the requested quantile.
+
+**Contamination:** Isolation Forest uses scikit-learn's default `auto` setting because the parameter is not explicitly configured. Its internal prediction threshold is distinct from the project's validation-based threshold.
+
+**Final evaluation:** The saved threshold is applied to Wednesday–Friday traffic. Test labels are not used for threshold selection.
+
+**Important:** Target FPR values are configuration settings, not measured FPR results. Actual validation FPR and attack recall must be calculated from genuine evaluation data.
 
 ### Results
 
