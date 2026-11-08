@@ -217,46 +217,73 @@ PR-AUC and per-attack recall matter more than accuracy here because attack data 
 
 ## Quickstart
 
+## Quickstart
+
+**Requirements:** Python 3.x, Git
+<!-- TODO: replace "3.x" with the version you actually ran, e.g. "3.10+" -->
+
+**1. Clone the repository**
+
 ```bash
 git clone https://github.com/yash-2999/network-intrusion-detection-anomaly-scoring.git
 cd network-intrusion-detection-anomaly-scoring
+```
 
+**2. Create and activate a virtual environment**
+
+```bash
 python -m venv .venv
-source .venv/bin/activate          # Windows: .\.venv\Scripts\Activate.ps1
+```
+
+Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Linux / macOS:
+
+```bash
+source .venv/bin/activate
+```
+
+> Windows: if activation fails with "running scripts is disabled", run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once, then activate again.
+
+**3. Install dependencies**
+
+```bash
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Place the dataset in `data/raw/` (see [Dataset](#dataset)), then follow [`RUN_GUIDE.md`](RUN_GUIDE.md) for the full training and evaluation sequence.
-
-<!-- TODO: paste the real train/evaluate commands from RUN_GUIDE.md here -->
-
-**Launch the app**
+**4. Run the tests** (synthetic fixtures; the dataset is not needed)
 
 ```bash
-streamlit run app/streamlit_app.py
+python -m pytest -v
 ```
 
-<!-- SCREENSHOTS: capture REAL images with scripts/capture_screenshots.py, then uncomment
-### Screenshots
+Covers data loading, preprocessing, dataset splitting, model behaviour, risk scoring and prediction. If these pass, your setup works.
 
-| | |
-|---|---|
-| ![Overview](assets/screenshots/01-overview.png)<br>**Overview.** Main dashboard. | ![Detection results](assets/screenshots/02-detection-results.png)<br>**Detection results.** Flows flagged by the frozen threshold. |
-| ![Model comparison](assets/screenshots/03-model-comparison.png)<br>**Model comparison.** Isolation Forest vs PCA vs supervised reference. | ![Threat analysis](assets/screenshots/04-threat-analysis.png)<br>**Threat analysis.** Feature-deviation diagnostics for a flagged flow. |
+**5. Prepare the dataset**
 
-Adjust captions to match what the app's pages actually show.
--->
+Download the original CIC-IDS2017 weekday CSVs and place them in `data/raw/`. Filenames and expected layout are in the [Dataset](#dataset) section.
 
-**Run the tests** (synthetic fixtures; the full dataset is not needed)
+**6. Train and evaluate**
+
+<!-- TODO: paste the real commands from RUN_GUIDE.md here, in a bash block, e.g.
+python -m src.nids.train
+python -m src.nids.evaluate
+Then add one line on what gets created, e.g. "Trained models are saved to models/ and reports to reports/." -->
+
+The full sequence and configuration details are in [`RUN_GUIDE.md`](RUN_GUIDE.md).
+
+**7. Launch the dashboard**
 
 ```bash
-pytest -v
+python -m streamlit run app/streamlit_app.py
 ```
 
-Covered: data loading, preprocessing, dataset splitting, model behaviour, risk scoring and prediction.
-
----
-
+Open http://localhost:8501 in your browser.
 ## Limitations
 
 This is an educational batch-flow research prototype, **not a production intrusion detection system**.
